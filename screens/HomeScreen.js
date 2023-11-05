@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import {Bars3CenterLeftIcon, MagnifyingGlassIcon} from "react-native-heroicons/outline"
 import TrendingMovies from '../components/trendingMovies'
+import MovieList from '../components/movieList'
 
 const ios = Platform.OS === "ios"
 
@@ -11,6 +12,10 @@ const ios = Platform.OS === "ios"
 export default function HomeScreen() {
   
   const [trending,setTrending] = useState([1,3,4])
+  const [upcomingMovies,setUpcomingMovies] = useState([1,2,3])
+  const [topRated,setTopRated] = useState([1,2,3])
+
+
 
 
   return (
@@ -41,6 +46,8 @@ export default function HomeScreen() {
       >
         {/* trending movies carousel */}
         <TrendingMovies trending={trending}/>
+        <MovieList title={"Upcoming"} data={upcomingMovies}/>
+        <MovieList title={"Top Rated"} data={topRated}/>
       </ScrollView>
 
       
