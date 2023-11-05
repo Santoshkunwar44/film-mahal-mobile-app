@@ -1,4 +1,4 @@
-import { Platform, Image, TouchableOpacity, Dimensions } from "react-native";
+import { Platform, Image, TouchableOpacity, Dimensions, ScrollView } from "react-native";
 import { View ,Text} from "react-native-animatable"
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles, theme } from "../theme";
@@ -6,6 +6,8 @@ import { ChevronLeftIcon, HeartIcon } from "react-native-heroicons/solid";
 import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import Cast from "../components/cast";
+import MovieList from "../components/movieList";
 
 
 
@@ -16,6 +18,8 @@ const MovieScreen=()=>{
 
 
     const [isFavoutite,setIsFavorite] =useState(true);
+    const [similarMovies,setSimilarMovies]  =useState([1,23,3,13,4])
+    const [cast,setCast] = useState([1,2,35,32,1])
     const navigation =useNavigation()
     const handlegoBack=()=>{
 
@@ -23,7 +27,7 @@ const MovieScreen=()=>{
     }
 
     return (
-        <SafeAreaView 
+        <ScrollView 
         contentContainerStyle={{paddingBottom:20}}
         className="flex-1 bg-neutral-900"
 
@@ -84,9 +88,13 @@ const MovieScreen=()=>{
 
             Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type ...Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type ...
             </Text>
+                
 
             </View>
-        </SafeAreaView>
+                <Cast cast={cast}/>
+                <MovieList title={"Similar Movies"} hideSeeAll={true} data={similarMovies}/>
+
+        </ScrollView>
 
         
     )

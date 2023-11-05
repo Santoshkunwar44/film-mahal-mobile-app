@@ -4,10 +4,15 @@ import {styles} from "../theme"
 import { useNavigation } from '@react-navigation/native'
 
 const {width,height} =Dimensions.get("window")
-
 const movieName = "Chandini Chowk to Chinan is the best movie in the world"
-const MovieList = ({title,data}) => {
+
+
+
+const MovieList = ({title,data ,hideSeeAll}) => {
+
+
   const navigation = useNavigation()
+
   const handlePress=(movie)=>{
     navigation.navigate("Movie",movie)
   }
@@ -16,9 +21,11 @@ const MovieList = ({title,data}) => {
       <View className="mx-4 flex-row justify-between items-center">
 
         <Text className="text-white text-xl">{title}</Text>
-        <TouchableOpacity>
+      {
+        !hideSeeAll && <TouchableOpacity>
           <Text className="text-lg" style={styles?.text}>See All</Text>
         </TouchableOpacity>
+      }  
 
       </View>
       <ScrollView
@@ -47,6 +54,7 @@ const MovieList = ({title,data}) => {
 
     </View>
   )
+  
 }
 
 export default MovieList
