@@ -20,7 +20,9 @@ const MovieScreen=()=>{
     const [isFavoutite,setIsFavorite] =useState(true);
     const [similarMovies,setSimilarMovies]  =useState([1,23,3,13,4])
     const [cast,setCast] = useState([1,2,35,32,1])
+    const [loading,setLoading] =useState(true)
     const navigation =useNavigation()
+
     const handlegoBack=()=>{
 
         navigation.goBack()

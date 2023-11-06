@@ -41,7 +41,7 @@ export default function SearchScreen() {
 
         {/* search input */}
         <View 
-            className="mx-4 mb-3 flex-row justify-between items-center border border-neutral-500 rounded-full" >
+            className="mx-4 mb-3 flex-row justify-between items-center border border-neutral-500 rounded-full mt-4" >
             <TextInput 
                 onChangeText={handleTextDebounce} 
                 placeholder="Search Movie" 
