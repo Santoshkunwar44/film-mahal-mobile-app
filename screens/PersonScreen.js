@@ -21,7 +21,7 @@ const {height,width} = Dimensions.get("window")
 const PersonScreen=()=>{
     const [isFavoutite,setIsFavorite] =useState(false)
     const [personMovie,setPersonMovie] =useState([])
-    const [loading,setLoading] =useState(false);
+    const [loading,setLoading] =useState(true);
     const navigation =useNavigation()
     const [person,setPerson] = useState({})
     const {params:item}= useRoute()
@@ -29,7 +29,6 @@ const PersonScreen=()=>{
 
     useEffect(()=>{
         if(!item.id)return;
-        setLoading(true)
         getPersonDetails(item.id)
         getPersonMovies(item.id)
         },[item])
@@ -41,10 +40,8 @@ const PersonScreen=()=>{
             if(data && data.cast){
                 setPersonMovie(data.cast)
             }
-            setLoading(false)
         } catch (error) {
             console.log(error)
-            setLoading(false)
         }
     }
        const getPersonDetails=async id=>{
@@ -68,8 +65,9 @@ const PersonScreen=()=>{
 
 
     return (
-        <ScrollView className="flex-1 bg-neutral-900" contentContainerStyle={{paddingBottom:20,height:"100%"}}>
-                <SafeAreaView className={`absolute z-20 w-full flex-row items-center justify-between px-4 ${!ios && "mt-3" }`} >
+        <ScrollView className="flex-1 bg-neutral-900 " contentContainerStyle={{paddingBottom:20}}>
+
+                <SafeAreaView className={`flex-row items-center justify-between mx-4 z-10 px-4 ${!ios && "mt-3" }`} >
                     <TouchableOpacity style={styles.background}  className="rounded-xl p1" onPress={handlegoBack}>
                         <ChevronLeftIcon size={"28"} strokeWidth={2.5} color={"white"}/>
                     </TouchableOpacity>
@@ -82,8 +80,9 @@ const PersonScreen=()=>{
          {/* person details */}
          {
             loading ? <Loading/> :   
-                 <View >
-            <View className="flex-row justify-center"
+         <View >
+            <View 
+            className="flex-row justify-center"
             style={{
                 shadowColor:"gray",
                 shadowRadius:40,
@@ -91,7 +90,7 @@ const PersonScreen=()=>{
                 shadowOpacity:1
             }}
             >
-                    <View className="items-center rounded-full overflow-hidden w-72 h-72 border-2 border-neutral-400">
+                    <View className="items-center rounded-full overflow-hidden w-72 h-72 border-2 border-neutral-500">
 
                 <Image
                 style={{height:height*0.43,width:width*0.74}}

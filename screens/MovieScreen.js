@@ -9,6 +9,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Cast from "../components/cast";
 import MovieList from "../components/movieList";
 import { fallbackMoviePoster, fetchMovieCredits, fetchMovieDetails, fetchSimilarMovies, image500 } from "../api/moviedb";
+import Loading from "../components/loading";
 
 
 
@@ -26,12 +27,18 @@ const MovieScreen=()=>{
     const [cast,setCast] =  useState([])
 
 
+    
+    
     useEffect(()=>{
+        console.log("mounting",loading)
         if(!item.id)return;
-        setLoading(true)
         getMovieDetails(item.id)
         getMovieCredits(item.id)
         getSimilarMovies(item.id)
+
+        return()=>{
+            setLoading(true)
+        }
 
     },[item])
 
@@ -43,9 +50,7 @@ const MovieScreen=()=>{
             setSimilarMovies(data.results)
           }
 
-          setLoading(false)
         } catch (error) {
-            setLoading(false)
             console.log(error)
         }
     }
@@ -55,10 +60,8 @@ const MovieScreen=()=>{
           if(data && data.cast){
             setCast(data.cast)
           }
-          setLoading(false)
 
         } catch (error) {
-            setLoading(false)
             console.log(error)
         }
     }
@@ -100,7 +103,11 @@ const MovieScreen=()=>{
                         <HeartIcon size={"28"} strokeWidth={2.5}  color={isFavoutite ? theme.background :"white"}/>
                     </TouchableOpacity>
                 </SafeAreaView>
-                <View>
+           
+        {
+            loading ? <Loading/> :  <>
+            
+             <View>
                     <Image 
                      source={{uri:image500(movie?.poster_path)||fallbackMoviePoster}}
                      style={{width,height:height*0.55}}
@@ -117,10 +124,14 @@ const MovieScreen=()=>{
                     
                     />
                 </View>
+            </>
 
+        }
 
-            </View>
-            <View style={{marginTop:-height*0.09}} className="space-y-3">
+             
+
+          
+                  <View style={{marginTop:-height*0.09}} className="space-y-3">
 
 
 
@@ -129,22 +140,23 @@ const MovieScreen=()=>{
                     {movie?.title}
 
                 </Text>
+                {/*  */}
 
-            <Text className="text-neutral-400 font-semibold text-base text-center">
+           { movie?.status &&  <Text className="text-neutral-400 font-semibold text-base text-center">
                 {movie?.status} . {movie?.release_date?.split('-')[0]} . {movie?.runtime} min
-            </Text>
+            </Text>}
             <View className="flex-row justify-center  mx-4 tracking-wide space-x-2">
 
 
         {
             movie?.genres?.map((genre,index)=>{
-
+                
                 let showDot  = index +1 !== movie.genres.length;
-           return   <Text key={index} className="text-neutral-400 font-semibold text-base text-center">
+                return   <Text key={index} className="text-neutral-400 font-semibold text-base text-center">
                 {genre.name} {showDot ? ".":null}
             </Text>
 })
-        }
+}
             </View>
             <Text className="text-neutral-400 mx-4 tracking-wide">
                 {movie.overview}
@@ -152,8 +164,11 @@ const MovieScreen=()=>{
                 
 
             </View>
-                <Cast cast={cast}/>
-                <MovieList title={"Similar Movies"} hideSeeAll={true} data={similarMovies}/>
+             
+        
+               { cast.length >0 && <Cast cast={cast}/>}
+                { similarMovies.length > 0 && <MovieList title={"Similar Movies"} hideSeeAll={true} data={similarMovies}/>}
+             </View>
 
         </ScrollView>
 
