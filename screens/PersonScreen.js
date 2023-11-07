@@ -5,12 +5,13 @@ import { ChevronLeftIcon } from "react-native-heroicons/outline"
 import { HeartIcon } from "react-native-heroicons/solid"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { styles, theme } from "../theme"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { View } from "react-native-animatable"
 import { Image } from "react-native"
 import MovieList from "../components/movieList"
 import Loading from "../components/loading"
-import { useNavigation } from "@react-navigation/native"
+import { useNavigation, useRoute } from "@react-navigation/native"
+import { fallbackPersonImage, fetchPersonDetails, fetchPersonMovies, image342 } from "../api/moviedb"
 
 const ios = Platform.OS ==="ios"
 const {height,width} = Dimensions.get("window")
@@ -19,13 +20,52 @@ const {height,width} = Dimensions.get("window")
 
 const PersonScreen=()=>{
     const [isFavoutite,setIsFavorite] =useState(false)
-    const [personMovie,setPersonMovie] =useState([1,35,14,12,55,11,234])
+    const [personMovie,setPersonMovie] =useState([])
     const [loading,setLoading] =useState(false);
     const navigation =useNavigation()
+    const [person,setPerson] = useState({})
+    const {params:item}= useRoute()
+
+
+    useEffect(()=>{
+        if(!item.id)return;
+        setLoading(true)
+        getPersonDetails(item.id)
+        getPersonMovies(item.id)
+        },[item])
+    
+
+    const getPersonMovies=async id=>{
+        try {
+            const data  = await fetchPersonMovies(id)
+            if(data && data.cast){
+                setPersonMovie(data.cast)
+            }
+            setLoading(false)
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+        }
+    }
+       const getPersonDetails=async id=>{
+
+        try {
+                const data = await fetchPersonDetails(id)
+                if(data){
+                    setPerson(data)
+                }
+                setLoading(false)
+        } catch (error) {
+            setLoading(false)
+        }
+
+       } 
       const handlegoBack=()=>{
 
         navigation.goBack()
     }
+
+
 
     return (
         <ScrollView className="flex-1 bg-neutral-900" contentContainerStyle={{paddingBottom:20,height:"100%"}}>
@@ -55,7 +95,7 @@ const PersonScreen=()=>{
 
                 <Image
                 style={{height:height*0.43,width:width*0.74}}
-                source={require("../assets/images/castImage2.png")}
+                source={{uri:image342(person?.profile_path)|| fallbackPersonImage}}
                 />
                 </View>
 
@@ -64,13 +104,12 @@ const PersonScreen=()=>{
 
                 <Text className="text-3xl text-white font-bold text-center">
 
-                    Spartan - Leonidas
+                    {person?.name}
 
                 </Text>
                    <Text className="text-base text-neutral-500  text-center">
 
-                    London UK
-
+                    {person?.place_of_birth}
                 </Text>
 
             </View>
@@ -78,19 +117,19 @@ const PersonScreen=()=>{
 
                 <View className="border-r-2  border-neutral-400 px-2 items-center" >
                     <Text className="text-white font-semibold">Gender</Text>
-                    <Text className="text-neutral-300 font-semibold">Male</Text>
+                    <Text className="text-neutral-300 font-semibold">{person.gender ===1 ?"Female":"Male"}</Text>
                 </View>
                 <View className="border-r-2  border-neutral-400 px-2 items-center" >
                     <Text className="text-white font-semibold">Birthday</Text>
-                    <Text className="text-neutral-300 font-semibold">1964-03-11</Text>
+                    <Text className="text-neutral-300 font-semibold">{person.birthday}</Text>
                 </View>
                 <View className="border-r-2  border-neutral-400 px-2 items-center" >
                     <Text className="text-white font-semibold">Known for </Text>
-                    <Text className="text-neutral-300 font-semibold">Acting</Text>
+                    <Text className="text-neutral-300 font-semibold">{person.known_for_department}</Text>
                 </View>
                 <View className="border-neutral-400 px-2 items-center" >
                     <Text className="text-white font-semibold">Popularity</Text>
-                    <Text className="text-neutral-300 font-semibold">64.23</Text>
+                    <Text className="text-neutral-300 font-semibold">{person.popularity?.toFixed(2)}%</Text>
                 </View>
 
             </View>
@@ -99,9 +138,7 @@ const PersonScreen=()=>{
                 <Text className="text-white text-lg">Biography</Text>
                 <Text className="text-neutral-400 tracking-wide">
 
-                    Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type ...Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type ...
-                   Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type ...Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type ...
-
+                  {person.biography ?? "NA"}
 
                 </Text>
 
