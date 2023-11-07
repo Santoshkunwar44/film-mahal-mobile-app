@@ -6,36 +6,66 @@ import TrendingMovies from '../components/trendingMovies'
 import MovieList from '../components/movieList'
 import { useNavigation } from '@react-navigation/native'
 import Loading from '../components/loading'
-import { fetchTrendingMovies } from '../api/moviedb'
+import { fetchTopRatedMovies, fetchTrendingMovies, fetchUpcomingMovies } from '../api/moviedb'
 
 const ios = Platform.OS === "ios"
 
 
 
 export default function HomeScreen() {
-
+ 
 
   const [trending,setTrending] = useState([])
-  const [upcomingMovies,setUpcomingMovies] = useState([1,2,3])
-  const [topRated,setTopRated] = useState([1,2,3])
+  const [upcomingMovies,setUpcomingMovies] = useState([])
+  const [topRated,setTopRated] = useState([])
   const [loading,setLoading] =useState(true)
   const navigation =useNavigation()
 
   useEffect(()=>{
-    setLoading(false)
     getTrendingMovies()
+    getUpcomingMovies()
+    getTopRatedMovies()
   },[])
   
-  console.log(trending)
   const getTrendingMovies=async()=>{
-    
-    const data = await fetchTrendingMovies()
-    console.log(data)
-    setTrending(data.results)
-    
+    try {
+      const data =   await fetchTrendingMovies()
+      if(data && data.results){
+        setTrending(data.results)
+
+      }
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
   }
+  const getUpcomingMovies=async()=>{
+    try {
+      const data =   await fetchUpcomingMovies()
+      if(data && data.results){
+        setUpcomingMovies(data.results)
 
+      }
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+  const getTopRatedMovies=async()=>{
+    try {
+      const data =   await fetchTopRatedMovies()
+      if(data && data.results){
+        setTopRated(data.results)
 
+      }
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
 
   return (
     <View className="flex-1 bg-neutral-800">

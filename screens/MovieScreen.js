@@ -3,11 +3,12 @@ import { View ,Text} from "react-native-animatable"
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles, theme } from "../theme";
 import { ChevronLeftIcon, HeartIcon } from "react-native-heroicons/solid";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Cast from "../components/cast";
 import MovieList from "../components/movieList";
+import { fallbackMoviePoster, fetchMovieCredits, fetchMovieDetails, fetchSimilarMovies, image500 } from "../api/moviedb";
 
 
 
@@ -16,12 +17,68 @@ const {width,height} = Dimensions.get("window")
 
 const MovieScreen=()=>{
 
-
     const [isFavoutite,setIsFavorite] =useState(true);
-    const [similarMovies,setSimilarMovies]  =useState([1,23,3,13,4])
-    const [cast,setCast] = useState([1,2,35,32,1])
+    const [similarMovies,setSimilarMovies]  =useState([])
     const [loading,setLoading] =useState(true)
     const navigation =useNavigation()
+    const {params:item} =useRoute()
+    const [movie,setMovie] = useState({})
+    const [cast,setCast] =  useState([])
+
+
+    useEffect(()=>{
+        if(!item.id)return;
+        setLoading(true)
+        getMovieDetails(item.id)
+        getMovieCredits(item.id)
+        getSimilarMovies(item.id)
+
+    },[item])
+
+
+    const getSimilarMovies=async id=>{
+        try {
+          const data = await  fetchSimilarMovies(id);    
+          if(data && data.results){
+            setSimilarMovies(data.results)
+          }
+
+          setLoading(false)
+        } catch (error) {
+            setLoading(false)
+            console.log(error)
+        }
+    }
+    const getMovieCredits=async id=>{
+        try {
+          const data = await  fetchMovieCredits(id);    
+          if(data && data.cast){
+            setCast(data.cast)
+          }
+          setLoading(false)
+
+        } catch (error) {
+            setLoading(false)
+            console.log(error)
+        }
+    }
+    const getMovieDetails=async id =>{
+
+        try {
+
+            const data = await fetchMovieDetails(id)
+            if(data){
+                setMovie(data)
+            }
+            setLoading(false)
+            
+        } catch (error) {
+            setLoading(false)
+                console.log(error)
+        }
+
+
+    }
 
     const handlegoBack=()=>{
 
@@ -45,7 +102,7 @@ const MovieScreen=()=>{
                 </SafeAreaView>
                 <View>
                     <Image 
-                     source={require("../assets/images/moviePoster2.png")}
+                     source={{uri:image500(movie?.poster_path)||fallbackMoviePoster}}
                      style={{width,height:height*0.55}}
 
                     />
@@ -69,26 +126,28 @@ const MovieScreen=()=>{
 
                 <Text className="text-white text-center text-3xl font-bold tracking-wider">
 
-                    Movie name
+                    {movie?.title}
 
                 </Text>
 
             <Text className="text-neutral-400 font-semibold text-base text-center">
-                Released . 2020 . 170 min
+                {movie?.status} . {movie?.release_date?.split('-')[0]} . {movie?.runtime} min
             </Text>
             <View className="flex-row justify-center  mx-4 tracking-wide space-x-2">
 
-        <Text className="text-neutral-400 font-semibold text-base text-center">
-                Action
-            </Text><Text className="text-neutral-400 font-semibold text-base text-center">
-               Thriller
-            </Text><Text className="text-neutral-400 font-semibold text-base text-center">
-                Comedy
+
+        {
+            movie?.genres?.map((genre,index)=>{
+
+                let showDot  = index +1 !== movie.genres.length;
+           return   <Text key={index} className="text-neutral-400 font-semibold text-base text-center">
+                {genre.name} {showDot ? ".":null}
             </Text>
+})
+        }
             </View>
             <Text className="text-neutral-400 mx-4 tracking-wide">
-
-            Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type ...Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type ...
+                {movie.overview}
             </Text>
                 
 

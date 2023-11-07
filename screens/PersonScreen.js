@@ -10,6 +10,7 @@ import { View } from "react-native-animatable"
 import { Image } from "react-native"
 import MovieList from "../components/movieList"
 import Loading from "../components/loading"
+import { useNavigation } from "@react-navigation/native"
 
 const ios = Platform.OS ==="ios"
 const {height,width} = Dimensions.get("window")
@@ -19,10 +20,13 @@ const {height,width} = Dimensions.get("window")
 const PersonScreen=()=>{
     const [isFavoutite,setIsFavorite] =useState(false)
     const [personMovie,setPersonMovie] =useState([1,35,14,12,55,11,234])
-    const [loading,setLoading] =useState(false)
-    const handlegoBack=()=>{
+    const [loading,setLoading] =useState(false);
+    const navigation =useNavigation()
+      const handlegoBack=()=>{
 
+        navigation.goBack()
     }
+
     return (
         <ScrollView className="flex-1 bg-neutral-900" contentContainerStyle={{paddingBottom:20,height:"100%"}}>
                 <SafeAreaView className={`absolute z-20 w-full flex-row items-center justify-between px-4 ${!ios && "mt-3" }`} >

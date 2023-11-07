@@ -2,6 +2,7 @@ import React from 'react'
 import { Dimensions, Image, ScrollView, Text, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import {styles} from "../theme"
 import { useNavigation } from '@react-navigation/native'
+import { fallbackMoviePoster, image185 } from '../api/moviedb'
 
 const {width,height} =Dimensions.get("window")
 const movieName = "Chandini Chowk to Chinan is the best movie in the world"
@@ -39,11 +40,11 @@ const MovieList = ({title,data ,hideSeeAll}) => {
         <TouchableWithoutFeedback  onPress={()=>handlePress(movie)} key={index}>
           <View className="space-y-1 mr-4">
             <Image
-              source={require("../assets/images/moviePoster2.png")}
+              source={{uri:image185(movie.poster_path) ?? fallbackMoviePoster}}
               style={{width:width*0.33, height:height*0.22}}
               />
             <Text className={"text-neutral-300 ml-1"}>
-              {movieName.length > 14 ? movieName.slice(0,14)+"...":movieName}
+              {movie?.title?.length > 14 ? movie?.title?.slice(0,14)+"...":movie?.title}
             </Text>
 
           </View>
